@@ -10,25 +10,29 @@ if(!file.exists("./data/data.zip")) {
 }
 
 measurements <- readRDS("./data/summarySCC_PM25.rds")
+#extract data for Baltimore(fips == "24510")
+measurements_baltimore <- measurements[measurements$fips=="24510", ]
 
-summary_data <- (tapply(measurements$Emissions, measurements$year, sum))/1e6
+summary_data <- (tapply(measurements_baltimore$Emissions, 
+                        measurements_baltimore$year,
+                        sum))/1e3
 
 #draw line plot
-png('yearly_total_emissions.png', width=640, height=480)
+png('yearly_total_emissions_baltimore.png', width=640, height=480)
 plot(x=names(summary_data), 
      y=summary_data, 
      type="b",
-     main="Yearly PM2.5 emissions",
+     main="Yearly PM2.5 emissions in Baltimore",
      xlab="Year",
-     ylab="Amount of PM2.5 emitted, MTons",
+     ylab="Amount of PM2.5 emitted, kTons",
      lwd=2,
      pch=16,
      col=3,
-     ylim=c(min(summary_data)-0.5, max(summary_data)+0.4))
+     ylim=c(min(summary_data)-1, max(summary_data)+1))
 
 #label data poins
 for(i in 1:length(summary_data)){
-text(names(summary_data)[i], summary_data[i] + 0.3, round(summary_data[i], 1))
+text(names(summary_data)[i], summary_data[i] + 0.2, round(summary_data[i],1))
 }
 
 dev.off()
